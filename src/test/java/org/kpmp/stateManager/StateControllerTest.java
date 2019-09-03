@@ -1,8 +1,12 @@
 package org.kpmp.stateManager;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Date;
 
 import org.junit.After;
 import org.junit.Before;
@@ -29,12 +33,13 @@ public class StateControllerTest {
 
 	@Test
 	public void testSetState() {
-		State state = new State();
+		State state = mock(State.class);
 		when(stateService.setState(state)).thenReturn("id");
 		String stateId = controller.setState(state);
 
 		assertEquals("id", stateId);
 		verify(stateService).setState(state);
+		verify(state).setStateChangeDate(any(Date.class));
 	}
 
 }
