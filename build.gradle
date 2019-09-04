@@ -23,8 +23,8 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'com.palantir.docker'
 
 jar {
-    baseName='stateManagerService'
-    version= '0.1'
+    baseName='state-manager-service'
+    version= '1.0'
 }
 
 repositories {
@@ -38,7 +38,7 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-web' 
 	compile 'org.apache.commons:commons-compress:1.17'
 	compile 'org.springframework.boot:spring-boot-starter-test'
-	compile 'org.springframework.data:spring-data-mongodb:2.0.8.RELEASE'
+	compile 'org.springframework.data:spring-data-mongodb'
 	compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 	testCompile 'org.mockito:mockito-core'
