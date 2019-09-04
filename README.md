@@ -1,11 +1,39 @@
-# stateManagerService
+# State Manager Service
+  
+This is intended to be a service available to other services and applications inside of KPMP.  It is not a stand-alone website, so there is only a Java project for the service layer.
 
-The state manager service will do the work to keep track of the state of packages as they travel from the data lake to the knowledge environment.
+It will run inside the dataLake network which is created by orion when running on a developer machine, or by the dataLakeProxyServer when running on our production-like and production instances.
 
-State manager will run in its own docker-compose script (found in the heavens-docker/stateManager repo on gitHub) and will run on the same network as orion.
+## Set up on your local machine
 
-To run on your local machine:
-1) Navigate to your heavens-docker/orion
-2) docker-compose -f docker-compose.dev.yml up -d
-3) Navigate to heavens-docker/stateManager
-4) docker-compose -f docker-compose.dev.yml up -d
+- Change directory to heavens-docker/orion
+- docker-compose -f docker-compose.dev.yml up -d
+- Change directory to heavens-docker/stateManager
+- docker-compose -f docker-compose.dev.yml up -d
+
+At this point you should be able to interact with the service by hitting endpoints at http://localhost:3060
+
+As you are working on changes, you should make sure to run ./gradlew build docker in order to create new docker images locally to be used inside docker.  After rebuilding the image, you will need to restart the docker container in order to pick up your changes.
+
+When you are done with your local changes, you will need to push the latest image to cloud.docker.com
+
+1) docker login
+2) Provide username/password (see another developer for these values)
+3) docker push kingstonduo/state-manager-service  // This will push to the 'latest' tag which we are using on our local development machines
+4) docker image ls
+5) Find the image you just built (should be at the top of the list) and grab the hash
+6) docker tag <hash> kingstonduo/state-manager-service:<x.x>  // Where hash is the value you just grabbed, and x.x is the release version you are working on
+7) docker push kingstonduo/state-manager-service:<x.x>
+
+## Set up in dev, qa or prod
+
+- Pull down the stateManagerService project at http://github.com/KPMP
+- Change directory to heavens-docker/dataLakeProxyServer
+- docker-compose up -d
+- Change directory to heavens-docker/ara
+- docker-compose up -d
+- Change directory to heavens-docker/orion
+- docker-compose -f docker-compose.shib.yml up -d
+- Change directory to heavens-docker/stateManager
+- docker-compose -f docker-compose.prod.yml up -d
+~                                                             
