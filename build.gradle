@@ -23,7 +23,7 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'com.palantir.docker'
 
 jar {
-    baseName='stateManagerService'
+    baseName='state-manager-service'
     version= '0.1'
 }
 
