@@ -2,6 +2,8 @@ package org.kpmp.stateManager;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +25,9 @@ public class StateController {
 	}
 
 	@RequestMapping(value = "/v1/state", method = RequestMethod.POST)
-	public @ResponseBody String setState(@RequestBody State state) {
-		log.info("recevied state: " + state.getPackageId());
+	public @ResponseBody String setState(@RequestBody State state, HttpServletRequest request) {
+		log.info("URI: " + request.getRequestURI() + " | PKGID: " + state.getPackageId() + " | MSG: Saving new state: "
+				+ state.getState());
 		state.setStateChangeDate(new Date());
 		return stateService.setState(state);
 	}

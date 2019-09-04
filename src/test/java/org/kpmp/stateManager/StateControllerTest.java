@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +37,7 @@ public class StateControllerTest {
 	public void testSetState() {
 		State state = mock(State.class);
 		when(stateService.setState(state)).thenReturn("id");
-		String stateId = controller.setState(state);
+		String stateId = controller.setState(state, mock(HttpServletRequest.class));
 
 		assertEquals("id", stateId);
 		verify(stateService).setState(state);
