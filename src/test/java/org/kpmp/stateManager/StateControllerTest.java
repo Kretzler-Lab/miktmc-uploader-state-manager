@@ -1,12 +1,12 @@
 package org.kpmp.stateManager;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,7 +41,30 @@ public class StateControllerTest {
 
 		assertEquals("id", stateId);
 		verify(stateService).setState(state);
-		verify(state).setStateChangeDate(any(Date.class));
+	}
+
+	@Test
+	public void testGetState() throws Exception {
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		State expectedState = mock(State.class);
+		when(stateService.getState("packageId")).thenReturn(expectedState);
+
+		State state = controller.getState("packageId", request);
+
+		assertEquals(expectedState, state);
+		verify(stateService).getState("packageId");
+	}
+
+	@Test
+	public void testGetStates() throws Exception {
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		List<State> expectedResults = Arrays.asList(mock(State.class));
+		when(stateService.getAllCurrentStates()).thenReturn(expectedResults);
+
+		List<State> states = controller.getStates(request);
+
+		assertEquals(expectedResults, states);
+		verify(stateService).getAllCurrentStates();
 	}
 
 }

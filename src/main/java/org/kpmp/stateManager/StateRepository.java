@@ -7,4 +7,6 @@ public interface StateRepository extends MongoRepository<State, String> {
 	@SuppressWarnings("unchecked")
 	public State save(State state);
 
+	public State findFirstByPackageIdOrderByStateChangeDateDesc(String packageId);
+
 }

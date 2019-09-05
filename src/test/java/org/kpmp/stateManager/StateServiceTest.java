@@ -5,6 +5,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 public class StateServiceTest {
 
 	@Mock
-	private StateRepository stateRepository;
+	private CustomStateRepository stateRepository;
 	private StateService service;
 
 	@Before
@@ -39,6 +42,33 @@ public class StateServiceTest {
 
 		assertEquals("id", stateId);
 		verify(stateRepository).save(state);
+	}
+
+	@Test
+	public void testGetState() throws Exception {
+		State returnedState = mock(State.class);
+		when(stateRepository.findFirstByPackageIdOrderByStateChangeDateDesc("packageId")).thenReturn(returnedState);
+
+		assertEquals(returnedState, service.getState("packageId"));
+		verify(stateRepository).findFirstByPackageIdOrderByStateChangeDateDesc("packageId");
+	}
+
+	@Test
+	public void testGetAllCurrentStates() throws Exception {
+		when(stateRepository.findAllPackageIds()).thenReturn(Arrays.asList("packageId1", "packageId2"));
+		State state1 = mock(State.class);
+		State state2 = mock(State.class);
+		when(stateRepository.findFirstByPackageIdOrderByStateChangeDateDesc("packageId1")).thenReturn(state1);
+		when(stateRepository.findFirstByPackageIdOrderByStateChangeDateDesc("packageId2")).thenReturn(state2);
+
+		List<State> allCurrentStates = service.getAllCurrentStates();
+
+		assertEquals(2, allCurrentStates.size());
+		assertEquals(true, allCurrentStates.contains(state1));
+		assertEquals(true, allCurrentStates.contains(state2));
+		verify(stateRepository).findAllPackageIds();
+		verify(stateRepository).findFirstByPackageIdOrderByStateChangeDateDesc("packageId1");
+		verify(stateRepository).findFirstByPackageIdOrderByStateChangeDateDesc("packageId2");
 	}
 
 }
