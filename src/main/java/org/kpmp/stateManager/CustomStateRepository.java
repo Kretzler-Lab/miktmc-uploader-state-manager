@@ -48,18 +48,18 @@ public class CustomStateRepository {
 		query.with(Sort.by(Direction.DESC, STATE_CHANGE_DATE));
 		List<State> states = mongoTemplate.find(query, State.class);
 		List<State> uniquePackageStates = new ArrayList<>();
-        List<String> packageIds = new ArrayList<>();
-        Iterator<State> iterator = states.iterator();
+		List<String> packageIds = new ArrayList<>();
+		Iterator<State> iterator = states.iterator();
 
-        while(iterator.hasNext()) {
-            State state = iterator.next();
-            if(packageIds.indexOf(state.getPackageId()) > -1) {
-                continue;
-            }
+		while(iterator.hasNext()) {
+			State state = iterator.next();
+			if(packageIds.indexOf(state.getPackageId()) > -1) {
+				continue;
+			}
 
-            packageIds.add(state.getPackageId());
-            uniquePackageStates.add(state);
-        }
+			packageIds.add(state.getPackageId());
+			uniquePackageStates.add(state);
+		}
 
 		return uniquePackageStates;
 	}
