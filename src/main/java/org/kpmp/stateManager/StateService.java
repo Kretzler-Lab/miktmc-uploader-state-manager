@@ -1,6 +1,7 @@
 package org.kpmp.stateManager;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,11 @@ public class StateService {
 	public State getState(String packageId) {
 		State state = stateRepository.findFirstByPackageIdOrderByStateChangeDateDesc(packageId);
 		return state;
+	}
+
+	public List<State> findPackagesChangedAfterStateChangeDate(Date stateChangeDate) {
+		List<State> states = stateRepository.findPackagesChangedAfterStateChangeDate(stateChangeDate);
+		return states;
 	}
 
 	public List<State> getAllCurrentStates() {
