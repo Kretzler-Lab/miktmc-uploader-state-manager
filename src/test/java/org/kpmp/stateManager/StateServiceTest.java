@@ -5,8 +5,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
@@ -71,4 +74,22 @@ public class StateServiceTest {
 		verify(stateRepository).findFirstByPackageIdOrderByStateChangeDateDesc("packageId2");
 	}
 
+	@Test
+	public void testFindPackagesChangedAfterStateChangeDate() throws Exception {
+		State state1 = mock(State.class);
+		Date firstQueryDate = new Date();
+		TimeUnit.MILLISECONDS.sleep(10);
+		Date changeDate = new Date();
+		TimeUnit.MILLISECONDS.sleep(10);
+
+		state1.setStateChangeDate(changeDate);
+		List<State> stateList = new ArrayList<>();
+		stateList.add(state1);
+		when(stateRepository.findPackagesChangedAfterStateChangeDate(firstQueryDate)).thenReturn(stateList);
+
+		List<State> allCurrentStates = service.findPackagesChangedAfterStateChangeDate(firstQueryDate);
+
+		assertEquals(1, allCurrentStates.size());
+		assertEquals(true, allCurrentStates.contains(state1));
+	}
 }
