@@ -71,12 +71,10 @@ public class StateController {
 				log.info("URI: " + request.getRequestURI() + " | MSG: Long poll returning " + result.size()
 						+ " records");
 
-				// Useful for debugging; remove when we're done with spike / KPMP-1255
-				log.info("first record's stateChange Date asa UTC ms: " + result.get(0).getStateChangeDate().getTime());
-
-				// set result after completing task to return response to client
 				deferredResult.setResult(result);
 			} catch (Exception ex) {
+				log.error("UIR: " + request.getRequestURI() + "| MSG: Long polling encountered error: "
+						+ ex.getMessage());
 			}
 		});
 
