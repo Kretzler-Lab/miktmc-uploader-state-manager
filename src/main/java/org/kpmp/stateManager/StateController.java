@@ -1,6 +1,5 @@
 package org.kpmp.stateManager;
 
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -50,16 +49,17 @@ public class StateController {
 	}
 
 	@RequestMapping(value = "/v1/state/events/{afterTime}", method = RequestMethod.GET)
-	public @ResponseBody DeferredResult<List<State>> getStateEvents(@PathVariable("afterTime") String afterTime, HttpServletRequest request) {
-        Date stateChangeDate = new Date(new Long(afterTime));
+	public @ResponseBody DeferredResult<List<State>> getStateEvents(@PathVariable("afterTime") String afterTime,
+			HttpServletRequest request) {
+		Date stateChangeDate = new Date(new Long(afterTime));
 
 		log.info("URI: " + request.getRequestURI() + " | MSG: Long poll for events after " + stateChangeDate);
 
 		// Timeout after 1 minute
 		Long timeOutInMilliSec = 60000L;
 		String timeOutResp = "{\"timeout\": true}";
-		DeferredResult<List<State>> deferredResult = new DeferredResult<>(timeOutInMilliSec,timeOutResp);
-		CompletableFuture.runAsync(()->{
+		DeferredResult<List<State>> deferredResult = new DeferredResult<>(timeOutInMilliSec, timeOutResp);
+		CompletableFuture.runAsync(() -> {
 			try {
 				List<State> result = stateService.findPackagesChangedAfterStateChangeDate(stateChangeDate);
 
@@ -68,14 +68,13 @@ public class StateController {
 					result = stateService.findPackagesChangedAfterStateChangeDate(stateChangeDate);
 				}
 
-				log.info("URI: " + request.getRequestURI() + " | MSG: Long poll returning " + result.size() + " records");
+				log.info("URI: " + request.getRequestURI() + " | MSG: Long poll returning " + result.size()
+						+ " records");
 
-				//Useful for debugging; remove when we're done with spike / KPMP-1255
-                log.info("first record's stateChange Date asa UTC ms: " + result.get(0).getStateChangeDate().getTime());
-
-				//set result after completing task to return response to client
 				deferredResult.setResult(result);
-			}catch (Exception ex){
+			} catch (Exception ex) {
+				log.error("UIR: " + request.getRequestURI() + "| MSG: Long polling encountered error: "
+						+ ex.getMessage());
 			}
 		});
 
