@@ -1,22 +1,39 @@
 package org.kpmp;
 
-import org.kpmp.stateManager.CustomStateRepository;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.kpmp.stateManager.State;
+import org.kpmp.stateManager.StateService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.context.annotation.ComponentScan;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static java.time.LocalDate.now;
 
 @ComponentScan(basePackages = { "org.kpmp" })
 public class FailedPackageChecker implements CommandLineRunner {
 
-    CustomStateRepository stateRepository;
+    private static final Log log = LogFactory.getLog(FailedPackageChecker.class);
 
-    public FailedPackageChecker(CustomStateRepository stateRepository) {
-        this.stateRepository = stateRepository;
+    private StateService stateService;
+    @Value("${package.state.upload.failed}")
+    private String uploadFailedState;
+    @Value("${package.state.upload.succeeded}")
+    private String uploadSucceededState;
+    @Value("${file.base.path}")
+    private String basePath;
+    private static final long TIMEOUT = 1800000;
+
+
+    public FailedPackageChecker(StateService stateService) {
+        this.stateService = stateService;
     }
 
     public static void main(String[] args) {
@@ -25,18 +42,40 @@ public class FailedPackageChecker implements CommandLineRunner {
         app.run(args);
     }
 
+    public long getPackageLastModified(String packageId) {
+        String path = basePath + File.separator + "package_" + packageId + File.separator;
+        File file = new File(path);
+        return file.lastModified();
+    }
+
+    public long getTimeSinceLastModified(long lastModified) {
+        return System.currentTimeMillis() - lastModified;
+    }
+
     @Override
     public void run(String... args) throws Exception {
-        List<State> states = stateRepository.findPackagesUploadStarted();
+        List<State> states = stateService.findPackagesUploadStarted();
         List<State> failedPackages = new ArrayList<State>();
 
         for (State state: states) {
-            State succeededState = stateRepository.findPackageUploadSucceedById(state.getPackageId());
-            if (succeededState == null) {
-                System.out.println(state.getPackageId() + " did not succeed");
+            if (!stateService.isPackageFailed(state.getPackageId()) && !stateService.isPackageSucceeded(state.getPackageId())) {
                 failedPackages.add(state);
             }
-            
+        }
+
+        for (State state : failedPackages) {
+            long lastModified = getPackageLastModified(state.getPackageId());
+            long timeSinceLastModified = getTimeSinceLastModified(lastModified);
+            if (timeSinceLastModified > TIMEOUT) {
+                log.info("Package " + state.getPackageId() + " failed stale package check.");
+                State failedState = new State();
+                failedState.setPackageId(state.getPackageId());
+                failedState.setState(uploadFailedState);
+                failedState.setStateChangeDate(new Date());
+                failedState.setCodicil("Failed stale package check.");
+                stateService.setState(failedState);
+            }
+
         }
     }
 }

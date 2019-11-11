@@ -85,9 +85,9 @@ public class CustomStateRepository {
 		return mongoTemplate.find(query, State.class);
 	}
 
-	public State findPackageUploadSucceedById(String packageId) {
+	public State findPackageByIdAndByState(String packageId, String state) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where(STATE_FIELD).is("UPLOAD_SUCCEEDED").and(PACKAGE_ID_FIELD).is(packageId));
+		query.addCriteria(Criteria.where(STATE_FIELD).is(state).and(PACKAGE_ID_FIELD).is(packageId));
 		return mongoTemplate.findOne(query, State.class);
 	}
 }
