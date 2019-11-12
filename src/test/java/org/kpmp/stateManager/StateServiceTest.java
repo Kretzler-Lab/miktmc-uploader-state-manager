@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class StateServiceTest {
 
@@ -27,6 +28,8 @@ public class StateServiceTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		service = new StateService(stateRepository);
+		ReflectionTestUtils.setField(service, "uploadFailedState", "UPLOAD_FAILED");
+		ReflectionTestUtils.setField(service, "uploadSucceededState", "UPLOAD_SUCCEEDED");
 	}
 
 	@After
@@ -91,5 +94,40 @@ public class StateServiceTest {
 
 		assertEquals(1, allCurrentStates.size());
 		assertEquals(true, allCurrentStates.contains(state1));
+	}
+
+	@Test
+	public void testFindPackagesUploadStarted() throws Exception {
+		State state1 = mock(State.class);
+		State state2 = mock(State.class);
+		List<State> states = Arrays.asList(state1, state2);
+		when(stateRepository.findPackagesUploadStarted()).thenReturn(states);
+		assertEquals(states, service.findPackagesUploadStarted());
+	}
+
+	@Test
+	public void testIsPackageSucceededTrue() throws Exception {
+		State state1 = new State();
+		when(stateRepository.findPackageByIdAndByState("1234", "UPLOAD_SUCCEEDED")).thenReturn(state1);
+		assertEquals(true, service.isPackageSucceeded("1234"));
+	}
+
+	@Test
+	public void testIsPackageSucceededFalse() throws Exception {
+		when(stateRepository.findPackageByIdAndByState("1234", "UPLOAD_SUCCEEDED")).thenReturn(null);
+		assertEquals(false, service.isPackageSucceeded("1234"));
+	}
+
+	@Test
+	public void testIsPackageFailedTrue() throws Exception {
+		State state1 = new State();
+		when(stateRepository.findPackageByIdAndByState("1234", "UPLOAD_FAILED")).thenReturn(state1);
+		assertEquals(true, service.isPackageFailed("1234"));
+	}
+
+	@Test
+	public void testIsPackageFailedFalse() throws Exception {
+		when(stateRepository.findPackageByIdAndByState("1234", "UPLOAD_FAILED")).thenReturn(null);
+		assertEquals(false, service.isPackageFailed("1234"));
 	}
 }

@@ -15,13 +15,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static java.time.LocalDate.now;
-
 @ComponentScan(basePackages = { "org.kpmp" })
 public class FailedPackageChecker implements CommandLineRunner {
-
-    private static final Log log = LogFactory.getLog(FailedPackageChecker.class);
-
+    
     private StateService stateService;
     @Value("${package.state.upload.failed}")
     private String uploadFailedState;
@@ -67,7 +63,6 @@ public class FailedPackageChecker implements CommandLineRunner {
             long lastModified = getPackageLastModified(state.getPackageId());
             long timeSinceLastModified = getTimeSinceLastModified(lastModified);
             if (timeSinceLastModified > TIMEOUT) {
-                log.info("Package " + state.getPackageId() + " failed stale package check.");
                 State failedState = new State();
                 failedState.setPackageId(state.getPackageId());
                 failedState.setState(uploadFailedState);
