@@ -1,7 +1,5 @@
 package org.kpmp;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.kpmp.stateManager.State;
 import org.kpmp.stateManager.StateService;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +15,7 @@ import java.util.List;
 
 @ComponentScan(basePackages = { "org.kpmp" })
 public class FailedPackageChecker implements CommandLineRunner {
-    
+
     private StateService stateService;
     @Value("${package.state.upload.failed}")
     private String uploadFailedState;
