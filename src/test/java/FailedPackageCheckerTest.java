@@ -5,6 +5,7 @@ import org.kpmp.FailedPackageChecker;
 import org.kpmp.stateManager.StateService;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.web.client.RestTemplate;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,12 +13,14 @@ public class FailedPackageCheckerTest {
 
     @Mock
     private StateService service;
+    @Mock
+    RestTemplate restTemplate;
     private FailedPackageChecker packageChecker;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        packageChecker = new FailedPackageChecker(service);
+        packageChecker = new FailedPackageChecker(service, restTemplate);
     }
 
     @After

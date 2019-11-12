@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,6 +18,11 @@ import java.util.List;
 public class FailedPackageChecker implements CommandLineRunner {
 
     private StateService stateService;
+
+    @Value("${state.service.host}")
+    private String stateServiceHost;
+    @Value("${state.service.endpoint}")
+    private String stateServiceEndpoint;
     @Value("${package.state.upload.failed}")
     private String uploadFailedState;
     @Value("${package.state.upload.succeeded}")
@@ -24,10 +30,12 @@ public class FailedPackageChecker implements CommandLineRunner {
     @Value("${file.base.path}")
     private String basePath;
     private static final long TIMEOUT = 1800000;
+    private RestTemplate restTemplate;
 
 
-    public FailedPackageChecker(StateService stateService) {
+    public FailedPackageChecker(StateService stateService, RestTemplate restTemplate) {
         this.stateService = stateService;
+        this.restTemplate = restTemplate;
     }
 
     public static void main(String[] args) {
@@ -44,6 +52,10 @@ public class FailedPackageChecker implements CommandLineRunner {
 
     public long getTimeSinceLastModified(long lastModified) {
         return System.currentTimeMillis() - lastModified;
+    }
+
+    public void sendStateChange(State state) {
+        String stateId = restTemplate.postForObject(stateServiceHost + stateServiceEndpoint, state, String.class);
     }
 
     @Override
@@ -66,7 +78,7 @@ public class FailedPackageChecker implements CommandLineRunner {
                 failedState.setState(uploadFailedState);
                 failedState.setStateChangeDate(new Date());
                 failedState.setCodicil("Failed stale package check.");
-                stateService.setState(failedState);
+                sendStateChange(failedState);
             }
 
         }
