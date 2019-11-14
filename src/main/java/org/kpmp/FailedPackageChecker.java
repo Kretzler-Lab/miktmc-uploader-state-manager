@@ -55,7 +55,7 @@ public class FailedPackageChecker implements CommandLineRunner {
     }
 
     public void sendStateChange(State state) {
-        String stateId = restTemplate.postForObject(stateServiceHost + stateServiceEndpoint, state, String.class);
+        restTemplate.postForObject(stateServiceHost + stateServiceEndpoint, state, String.class);
     }
 
     @Override
