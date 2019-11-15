@@ -73,7 +73,7 @@ public class StateController {
 
 				deferredResult.setResult(result);
 			} catch (Exception ex) {
-				log.error("UIR: " + request.getRequestURI() + "| MSG: Long polling encountered error: "
+				log.error("URI: " + request.getRequestURI() + "| MSG: Long polling encountered error: "
 						+ ex.getMessage());
 			}
 		});

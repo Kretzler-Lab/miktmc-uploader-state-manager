@@ -24,6 +24,8 @@ public class CustomStateRepository {
 	private static final String PACKAGE_ID_FIELD = "packageId";
 	private static final String STATE_COLLECTION = "state";
 	private static final String STATE_CHANGE_DATE = "stateChangeDate";
+	private static final String STATE_FIELD = "state";
+
 
 	private StateRepository stateRepository;
 	private MongoTemplate mongoTemplate;
@@ -75,5 +77,17 @@ public class CustomStateRepository {
 		}
 
 		return packageIds;
+	}
+
+	public List<State> findPackagesUploadStarted() {
+		Query query = new Query();
+		query.addCriteria(Criteria.where(STATE_FIELD).is("UPLOAD_STARTED"));
+		return mongoTemplate.find(query, State.class);
+	}
+
+	public State findPackageByIdAndByState(String packageId, String state) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where(STATE_FIELD).is(state).and(PACKAGE_ID_FIELD).is(packageId));
+		return mongoTemplate.findOne(query, State.class);
 	}
 }
