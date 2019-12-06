@@ -26,7 +26,7 @@ public class StateService {
 
 	public String setState(State state, String origin) {
 		State savedState = stateRepository.save(state);
-		notificationHandler.sendNotification(state.getPackageId(), state.getState(), origin);
+		notificationHandler.sendNotification(state.getPackageId(), state.getState(), origin, state.getCodicil());
 		return savedState.getId();
 	}
 

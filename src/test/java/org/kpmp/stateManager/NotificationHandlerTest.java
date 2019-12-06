@@ -39,7 +39,7 @@ public class NotificationHandlerTest {
 		when(restTemplate.postForObject(any(String.class), any(StateChangeEvent.class), any(Class.class)))
 				.thenReturn(true);
 
-		handler.sendNotification("packageId", "state", "origin");
+		handler.sendNotification("packageId", "state", "origin", "codicil");
 
 		ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<StateChangeEvent> stateChangeCaptor = ArgumentCaptor.forClass(StateChangeEvent.class);
@@ -50,6 +50,7 @@ public class NotificationHandlerTest {
 		assertEquals("packageId", stateChangeEvent.getPackageId());
 		assertEquals("state", stateChangeEvent.getState());
 		assertEquals("origin", stateChangeEvent.getOrigin());
+		assertEquals("codicil", stateChangeEvent.getCodicil());
 		assertEquals(Boolean.class, returnCaptor.getValue());
 	}
 

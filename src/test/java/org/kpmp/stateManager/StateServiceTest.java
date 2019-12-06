@@ -44,6 +44,7 @@ public class StateServiceTest {
 		State state = mock(State.class);
 		when(state.getPackageId()).thenReturn("packageId");
 		when(state.getState()).thenReturn("state");
+		when(state.getCodicil()).thenReturn("codicil");
 		State returnState = mock(State.class);
 		when(returnState.getId()).thenReturn("id");
 		when(stateRepository.save(state)).thenReturn(returnState);
@@ -52,7 +53,7 @@ public class StateServiceTest {
 
 		assertEquals("id", stateId);
 		verify(stateRepository).save(state);
-		verify(notificationHandler).sendNotification("packageId", "state", "origin");
+		verify(notificationHandler).sendNotification("packageId", "state", "origin", "codicil");
 	}
 
 	@Test

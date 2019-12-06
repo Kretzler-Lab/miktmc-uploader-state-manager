@@ -20,10 +20,10 @@ class NotificationHandler {
 		this.restTemplate = restTemplate;
 	}
 
-	public void sendNotification(String packageId, String state, String origin) {
+	public void sendNotification(String packageId, String state, String origin, String codicil) {
 
 		Boolean response = restTemplate.postForObject(notificationServiceHost + notificationEndpoint,
-				new StateChangeEvent(origin, packageId, state), Boolean.class);
+				new StateChangeEvent(origin, packageId, state, codicil), Boolean.class);
 
 		if (!response) {
 			logger.error("URI: NotificationHandler.sendNotification | PKGID: " + packageId

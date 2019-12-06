@@ -12,7 +12,7 @@ public class StateChangeEventTest {
 
 	@Before
 	public void setUp() throws Exception {
-		event = new StateChangeEvent("origin", "packageId", "state");
+		event = new StateChangeEvent("origin", "packageId", "state", "codicil");
 	}
 
 	@After
@@ -22,10 +22,11 @@ public class StateChangeEventTest {
 
 	@Test
 	public void testConstructor() throws Exception {
-		event = new StateChangeEvent("origin2", "packageId2", "state2");
+		event = new StateChangeEvent("origin2", "packageId2", "state2", "codicil2");
 		assertEquals("origin2", event.getOrigin());
 		assertEquals("packageId2", event.getPackageId());
 		assertEquals("state2", event.getState());
+		assertEquals("codicil2", event.getCodicil());
 	}
 
 	@Test
@@ -46,4 +47,9 @@ public class StateChangeEventTest {
 		assertEquals("failed", event.getState());
 	}
 
+	@Test
+	public void testCodicil() throws Exception {
+		event.setCodicil("no worky");
+		assertEquals("no worky", event.getCodicil());
+	}
 }
