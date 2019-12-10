@@ -57,6 +57,16 @@ public class FailedPackageChecker implements CommandLineRunner {
 		restTemplate.postForObject(stateServiceHost + stateServiceEndpoint + "/unknown", state, String.class);
 	}
 
+	public boolean packageDidFail(State state) {
+		long lastModified = getPackageLastModified(state.getPackageId());
+		return packageDidFail(state, lastModified);
+	}
+
+	public boolean packageDidFail(State state, long lastModified) {
+		long timeSinceLastModified = getTimeSinceLastModified(lastModified);
+		return !state.getLargeFilesChecked() && timeSinceLastModified > TIMEOUT;
+	}
+
 	@Override
 	public void run(String... args) throws Exception {
 		List<State> states = stateService.findPackagesUploadStarted();
@@ -70,17 +80,15 @@ public class FailedPackageChecker implements CommandLineRunner {
 		}
 
 		for (State state : failedPackages) {
-			long lastModified = getPackageLastModified(state.getPackageId());
-			long timeSinceLastModified = getTimeSinceLastModified(lastModified);
-			if (timeSinceLastModified > TIMEOUT) {
+			if (packageDidFail(state)) {
 				State failedState = new State();
 				failedState.setPackageId(state.getPackageId());
 				failedState.setState(uploadFailedState);
+				failedState.setLargeFilesChecked(state.getLargeFilesChecked());
 				failedState.setStateChangeDate(new Date());
 				failedState.setCodicil("Failed stale package check.");
 				sendStateChange(failedState);
 			}
-
 		}
 	}
 }

@@ -12,6 +12,7 @@ public class State {
 	private String id;
 	private String packageId;
 	private String state;
+	private Boolean largeFilesChecked;
 	private String codicil;
 	private Date stateChangeDate;
 
@@ -38,6 +39,10 @@ public class State {
 	public void setState(String state) {
 		this.state = state;
 	}
+
+	public Boolean getLargeFilesChecked() { return largeFilesChecked; }
+
+	public void setLargeFilesChecked(Boolean largeFilesChecked) { this.largeFilesChecked = largeFilesChecked; }
 
 	public String getPackageId() {
 		return packageId;
