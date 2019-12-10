@@ -36,11 +36,11 @@ public class StateControllerTest {
 	@Test
 	public void testSetState() {
 		State state = mock(State.class);
-		when(stateService.setState(state)).thenReturn("id");
-		String stateId = controller.setState(state, mock(HttpServletRequest.class));
+		when(stateService.setState(state, "origin")).thenReturn("id");
+		String stateId = controller.setState(state, "origin", mock(HttpServletRequest.class));
 
 		assertEquals("id", stateId);
-		verify(stateService).setState(state);
+		verify(stateService).setState(state, "origin");
 	}
 
 	@Test
