@@ -16,14 +16,17 @@ public class StateService {
 	private String uploadFailedState;
 	@Value("${package.state.upload.succeeded}")
 	private String uploadSucceededState;
+	private NotificationHandler notificationHandler;
 
 	@Autowired
-	public StateService(CustomStateRepository stateRepository) {
+	public StateService(CustomStateRepository stateRepository, NotificationHandler notificationHandler) {
 		this.stateRepository = stateRepository;
+		this.notificationHandler = notificationHandler;
 	}
 
-	public String setState(State state) {
+	public String setState(State state, String origin) {
 		State savedState = stateRepository.save(state);
+		notificationHandler.sendNotification(state.getPackageId(), state.getState(), origin, state.getCodicil());
 		return savedState.getId();
 	}
 

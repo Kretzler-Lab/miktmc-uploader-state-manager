@@ -29,11 +29,12 @@ public class StateController {
 		this.stateService = stateService;
 	}
 
-	@RequestMapping(value = "/v1/state", method = RequestMethod.POST)
-	public @ResponseBody String setState(@RequestBody State state, HttpServletRequest request) {
+	@RequestMapping(value = "/v1/state/host/{host}", method = RequestMethod.POST)
+	public @ResponseBody String setState(@RequestBody State state, @PathVariable("host") String origin,
+			HttpServletRequest request) {
 		log.info("URI: " + request.getRequestURI() + " | PKGID: " + state.getPackageId() + " | MSG: Saving new state: "
 				+ state.getState());
-		return stateService.setState(state);
+		return stateService.setState(state, origin);
 	}
 
 	@RequestMapping(value = "/v1/state/{packageId}", method = RequestMethod.GET)

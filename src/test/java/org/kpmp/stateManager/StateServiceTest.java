@@ -23,11 +23,13 @@ public class StateServiceTest {
 	@Mock
 	private CustomStateRepository stateRepository;
 	private StateService service;
+	@Mock
+	private NotificationHandler notificationHandler;
 
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		service = new StateService(stateRepository);
+		service = new StateService(stateRepository, notificationHandler);
 		ReflectionTestUtils.setField(service, "uploadFailedState", "UPLOAD_FAILED");
 		ReflectionTestUtils.setField(service, "uploadSucceededState", "UPLOAD_SUCCEEDED");
 	}
@@ -40,14 +42,18 @@ public class StateServiceTest {
 	@Test
 	public void testSetState() {
 		State state = mock(State.class);
+		when(state.getPackageId()).thenReturn("packageId");
+		when(state.getState()).thenReturn("state");
+		when(state.getCodicil()).thenReturn("codicil");
 		State returnState = mock(State.class);
 		when(returnState.getId()).thenReturn("id");
 		when(stateRepository.save(state)).thenReturn(returnState);
 
-		String stateId = service.setState(state);
+		String stateId = service.setState(state, "origin");
 
 		assertEquals("id", stateId);
 		verify(stateRepository).save(state);
+		verify(notificationHandler).sendNotification("packageId", "state", "origin", "codicil");
 	}
 
 	@Test
