@@ -29,7 +29,7 @@ public class FailedPackageChecker implements CommandLineRunner {
 	private String uploadSucceededState;
 	@Value("${file.base.path}")
 	private String basePath;
-	private static final long TIMEOUT = 1800000;
+	private static final long TIMEOUT = 60 * 1000; //1800000;
 	private RestTemplate restTemplate;
 
 	public FailedPackageChecker(StateService stateService, RestTemplate restTemplate) {
@@ -64,7 +64,7 @@ public class FailedPackageChecker implements CommandLineRunner {
 
 	public boolean packageDidFail(State state, long lastModified) {
 		long timeSinceLastModified = getTimeSinceLastModified(lastModified);
-		return !state.getLargeFilesChecked() && timeSinceLastModified > TIMEOUT;
+		return !"true".equals(state.getLargeUploadChecked()) && timeSinceLastModified > TIMEOUT;
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class FailedPackageChecker implements CommandLineRunner {
 				State failedState = new State();
 				failedState.setPackageId(state.getPackageId());
 				failedState.setState(uploadFailedState);
-				failedState.setLargeFilesChecked(state.getLargeFilesChecked());
+				failedState.setLargeUploadChecked(state.getLargeUploadChecked());
 				failedState.setStateChangeDate(new Date());
 				failedState.setCodicil("Failed stale package check.");
 				sendStateChange(failedState);

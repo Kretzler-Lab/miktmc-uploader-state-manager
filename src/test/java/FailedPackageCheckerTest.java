@@ -39,15 +39,15 @@ public class FailedPackageCheckerTest {
     @Test
     public void testPackageDidFail() throws Exception {
         State state = new State();
-        state.setLargeFilesChecked(false);
+        state.setLargeUploadChecked("false");
 
-        long timeSinceLastModified = System.currentTimeMillis() - 29 * 60 * 1000;
+        long timeSinceLastModified = System.currentTimeMillis() - 59 * 1000; //29 * 60 * 1000;
         assertFalse(packageChecker.packageDidFail(state, timeSinceLastModified));
 
         timeSinceLastModified = System.currentTimeMillis() - 31 * 60 * 1000;
         assertTrue(packageChecker.packageDidFail(state, timeSinceLastModified));
 
-        state.setLargeFilesChecked(true);
+        state.setLargeUploadChecked("true");
         assertFalse(packageChecker.packageDidFail(state, timeSinceLastModified));
     }
 }
