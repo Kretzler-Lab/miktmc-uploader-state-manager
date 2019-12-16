@@ -2,7 +2,6 @@ package org.kpmp.stateManager;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
