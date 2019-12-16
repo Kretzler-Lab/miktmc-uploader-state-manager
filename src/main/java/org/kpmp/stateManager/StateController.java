@@ -32,8 +32,9 @@ public class StateController {
 	@RequestMapping(value = "/v1/state/host/{host}", method = RequestMethod.POST)
 	public @ResponseBody String setState(@RequestBody State state, @PathVariable("host") String origin,
 			HttpServletRequest request) {
+		String largeFilesChecked = null == state.getLargeUploadChecked() ? "null" : state.getLargeUploadChecked();
 		log.info("URI: " + request.getRequestURI() + " | PKGID: " + state.getPackageId() + " | MSG: Saving new state: "
-				+ state.getState());
+				+ state.getState() + " | largeFilesChecked: " + largeFilesChecked);
 		return stateService.setState(state, origin);
 	}
 

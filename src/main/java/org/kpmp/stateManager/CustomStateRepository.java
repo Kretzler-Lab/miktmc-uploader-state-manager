@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -26,6 +27,12 @@ public class CustomStateRepository {
 	private static final String STATE_CHANGE_DATE = "stateChangeDate";
 	private static final String STATE_FIELD = "state";
 
+	@Value("${package.state.checker.timeout}")
+	private long timeout;
+	@Value("${package.state.upload.started}")
+	private String uploadStartedState;
+	@Value("${package.state.metadata.received}")
+	private String metadataReceivedState;
 
 	private StateRepository stateRepository;
 	private MongoTemplate mongoTemplate;
@@ -79,10 +86,19 @@ public class CustomStateRepository {
 		return packageIds;
 	}
 
-	public List<State> findPackagesUploadStarted() {
-		Query query = new Query();
-		query.addCriteria(Criteria.where(STATE_FIELD).is("UPLOAD_STARTED"));
-		return mongoTemplate.find(query, State.class);
+	public List<State> findFailablePackagesAfterStateChangeDate(Date stateChangeDate) {
+		List<State> uniqueChangedPackages = findPackagesChangedAfterStateChangeDate(stateChangeDate);
+		List<State> uniqueFailablePackages = new ArrayList<>();
+		Iterator<State> iterator = uniqueChangedPackages.iterator();
+
+		while(iterator.hasNext()) {
+			State state = iterator.next();
+			if(metadataReceivedState.equals(state.getState()) && !"true".equals(state.getLargeUploadChecked())) {
+				uniqueFailablePackages.add(state);
+			}
+		}
+
+		return uniqueFailablePackages;
 	}
 
 	public State findPackageByIdAndByState(String packageId, String state) {
