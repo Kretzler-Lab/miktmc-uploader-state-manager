@@ -83,7 +83,8 @@ public class FailedPackageChecker implements CommandLineRunner {
 		List<State> states = stateService.findFailablePackagesAfterStateChangeDate(checkAfterDate);
 		List<State> failedPackages = new ArrayList<>();
 
-		log.info("URI: FailedPackageChecker.run | MSG: Checking " + states.size() + " packages for failure; checkAfterDate in millis: " + checkAfterDate.getTime());
+		log.info("URI: FailedPackageChecker.run | MSG: Checking " + states.size() + " packages for failure | " +
+				"AFTERMILLIS: " + checkAfterDate.getTime());
 
 		for (State state : states) {
 			if (!stateService.isPackageFailed(state.getPackageId())
