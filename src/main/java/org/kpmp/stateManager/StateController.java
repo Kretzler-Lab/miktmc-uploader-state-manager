@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,9 @@ public class StateController {
 
 	private StateService stateService;
 	private static final Log log = LogFactory.getLog(StateController.class);
+
+	@Value("${package.state.longpoll.timeout}")
+	Long longPollTimeoutMillis;
 
 	@Autowired
 	public StateController(StateService stateService) {
@@ -57,10 +61,8 @@ public class StateController {
 
 		log.info("URI: " + request.getRequestURI() + " | MSG: Long poll for events after " + stateChangeDate);
 
-		// Timeout after 1 minute
-		Long timeOutInMilliSec = 60000L;
 		String timeOutResp = "{\"timeout\": true}";
-		DeferredResult<List<State>> deferredResult = new DeferredResult<>(timeOutInMilliSec, timeOutResp);
+		DeferredResult<List<State>> deferredResult = new DeferredResult<>(longPollTimeoutMillis, timeOutResp);
 		CompletableFuture.runAsync(() -> {
 			try {
 				List<State> result = stateService.findPackagesChangedAfterStateChangeDate(stateChangeDate);
