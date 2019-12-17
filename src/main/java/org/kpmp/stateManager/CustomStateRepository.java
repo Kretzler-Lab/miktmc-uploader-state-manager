@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -21,11 +24,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomStateRepository {
 
+	private static final Log log = LogFactory.getLog(CustomStateRepository.class);
+
 	private static final String PACKAGE_ID_FIELD = "packageId";
 	private static final String STATE_COLLECTION = "state";
 	private static final String STATE_CHANGE_DATE = "stateChangeDate";
 	private static final String STATE_FIELD = "state";
 
+	@Value("${package.state.checker.timeout}")
+	private long timeout;
+	@Value("${package.state.upload.started}")
+	private String uploadStartedState;
+	@Value("${package.state.metadata.received}")
+	private String metadataReceivedState;
 
 	private StateRepository stateRepository;
 	private MongoTemplate mongoTemplate;
@@ -79,10 +90,29 @@ public class CustomStateRepository {
 		return packageIds;
 	}
 
-	public List<State> findPackagesUploadStarted() {
-		Query query = new Query();
-		query.addCriteria(Criteria.where(STATE_FIELD).is("UPLOAD_STARTED"));
-		return mongoTemplate.find(query, State.class);
+	public List<State> findFailablePackagesAfterStateChangeDate(Date stateChangeDate) {
+		List<State> uniqueChangedPackages = findPackagesChangedAfterStateChangeDate(stateChangeDate);
+		List<State> uniqueFailablePackages = new ArrayList<>();
+		Iterator<State> iterator = uniqueChangedPackages.iterator();
+
+		while(iterator.hasNext()) {
+			State state = iterator.next();
+
+			log.info("URI: CustomStateRepository.findFailablePackagesAfterStateChangeDate | " +
+					"MSG: reviewing package state for potential failure | PKGID: " + state.getPackageId() + " | " +
+					"PKGSTATE: " + state.getState() + " | PKGLFU: " + state.getLargeUploadChecked() + " | " +
+ 					"AFTERMILLIS: " + stateChangeDate.getTime());
+
+			if(metadataReceivedState.equals(state.getState()) && !"true".equals(state.getLargeUploadChecked())) {
+				uniqueFailablePackages.add(state);
+				log.info("URI: CustomStateRepository.findFailablePackagesAfterStateChangeDate | " +
+						"MSG: added package to failure check | PKGID: " + state.getPackageId() + " | " +
+						"PKGSTATE: " + state.getState() + " | PKGLFU: " + state.getLargeUploadChecked() + " | " +
+						"AFTERMILLIS: " + stateChangeDate.getTime());
+			}
+		}
+
+		return uniqueFailablePackages;
 	}
 
 	public State findPackageByIdAndByState(String packageId, String state) {

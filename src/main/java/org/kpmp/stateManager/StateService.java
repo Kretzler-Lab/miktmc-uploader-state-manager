@@ -40,8 +40,8 @@ public class StateService {
 		return states;
 	}
 
-	public List<State> findPackagesUploadStarted() {
-		List<State> states = stateRepository.findPackagesUploadStarted();
+	public List<State> findFailablePackagesAfterStateChangeDate(Date stateChangeDate) {
+		List<State> states = stateRepository.findFailablePackagesAfterStateChangeDate(stateChangeDate);
 		return states;
 	}
 

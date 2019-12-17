@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.kpmp.stateManager.State;
 import org.kpmp.stateManager.StateService;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +21,8 @@ public class FailedPackageChecker implements CommandLineRunner {
 
 	private StateService stateService;
 
+	private static final Log log = LogFactory.getLog(FailedPackageChecker.class);
+
 	@Value("${state.service.host}")
 	private String stateServiceHost;
 	@Value("${state.service.endpoint}")
@@ -29,7 +33,11 @@ public class FailedPackageChecker implements CommandLineRunner {
 	private String uploadSucceededState;
 	@Value("${file.base.path}")
 	private String basePath;
-	private static final long TIMEOUT = 1800000;
+	@Value("${package.state.checker.timeout}")
+	private long timeout;
+	@Value("${package.state.checker.checkaftermillis}")
+	private long checkAfterMillis;
+
 	private RestTemplate restTemplate;
 
 	public FailedPackageChecker(StateService stateService, RestTemplate restTemplate) {
@@ -64,13 +72,18 @@ public class FailedPackageChecker implements CommandLineRunner {
 
 	public boolean packageDidFail(State state, long lastModified) {
 		long timeSinceLastModified = getTimeSinceLastModified(lastModified);
-		return !state.getLargeFilesChecked() && timeSinceLastModified > TIMEOUT;
+		return timeSinceLastModified > timeout;
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
-		List<State> states = stateService.findPackagesUploadStarted();
-		List<State> failedPackages = new ArrayList<State>();
+
+		Date checkAfterDate = new Date(new Date().getTime() - checkAfterMillis);
+		List<State> states = stateService.findFailablePackagesAfterStateChangeDate(checkAfterDate);
+		List<State> failedPackages = new ArrayList<>();
+
+		log.info("URI: FailedPackageChecker.run | MSG: Checking " + states.size() + " packages for failure | " +
+				"AFTERMILLIS: " + checkAfterDate.getTime());
 
 		for (State state : states) {
 			if (!stateService.isPackageFailed(state.getPackageId())
@@ -79,16 +92,20 @@ public class FailedPackageChecker implements CommandLineRunner {
 			}
 		}
 
+		log.info("URI: FailedPackageChecker.run | MSG: Found " + failedPackages.size() + " stale packages; setting state...");
+
 		for (State state : failedPackages) {
 			if (packageDidFail(state)) {
 				State failedState = new State();
 				failedState.setPackageId(state.getPackageId());
 				failedState.setState(uploadFailedState);
-				failedState.setLargeFilesChecked(state.getLargeFilesChecked());
+				failedState.setLargeUploadChecked(state.getLargeUploadChecked());
 				failedState.setStateChangeDate(new Date());
-				failedState.setCodicil("Failed stale package check.");
+				failedState.setCodicil("Failed stale package check");
 				sendStateChange(failedState);
 			}
 		}
+
+		log.info("URI: FailedPackageChecker.run | MSG: Done");
 	}
 }

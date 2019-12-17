@@ -12,7 +12,7 @@ public class State {
 	private String id;
 	private String packageId;
 	private String state;
-	private Boolean largeFilesChecked;
+	private String largeUploadChecked;
 	private String codicil;
 	private Date stateChangeDate;
 
@@ -40,9 +40,9 @@ public class State {
 		this.state = state;
 	}
 
-	public Boolean getLargeFilesChecked() { return largeFilesChecked; }
+	public String getLargeUploadChecked() { return largeUploadChecked; }
 
-	public void setLargeFilesChecked(Boolean largeFilesChecked) { this.largeFilesChecked = largeFilesChecked; }
+	public void setLargeUploadChecked(String largeUploadChecked) { this.largeUploadChecked = largeUploadChecked; }
 
 	public String getPackageId() {
 		return packageId;

@@ -6,6 +6,7 @@ import org.kpmp.stateManager.State;
 import org.kpmp.stateManager.StateService;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.Assert.assertEquals;
@@ -14,11 +15,14 @@ import static org.junit.Assert.assertTrue;
 
 public class FailedPackageCheckerTest {
 
+
     @Mock
     private StateService service;
     @Mock
     RestTemplate restTemplate;
     private FailedPackageChecker packageChecker;
+    @Value("${package.state.checker.timeout}")
+    private long timeout;
 
     @Before
     public void setUp() throws Exception {
@@ -39,15 +43,10 @@ public class FailedPackageCheckerTest {
     @Test
     public void testPackageDidFail() throws Exception {
         State state = new State();
-        state.setLargeFilesChecked(false);
-
-        long timeSinceLastModified = System.currentTimeMillis() - 29 * 60 * 1000;
+        long timeSinceLastModified = System.currentTimeMillis() - timeout + 1;
         assertFalse(packageChecker.packageDidFail(state, timeSinceLastModified));
 
-        timeSinceLastModified = System.currentTimeMillis() - 31 * 60 * 1000;
+        timeSinceLastModified = System.currentTimeMillis() - timeout - 1;
         assertTrue(packageChecker.packageDidFail(state, timeSinceLastModified));
-
-        state.setLargeFilesChecked(true);
-        assertFalse(packageChecker.packageDidFail(state, timeSinceLastModified));
     }
 }

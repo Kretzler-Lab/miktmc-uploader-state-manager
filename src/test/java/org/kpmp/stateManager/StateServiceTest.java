@@ -103,12 +103,13 @@ public class StateServiceTest {
 	}
 
 	@Test
-	public void testFindPackagesUploadStarted() throws Exception {
+	public void testFailablePackagesAfterStateChangeDate() throws Exception {
+		Date changedAfterDate = new Date(new Date().getTime() - 1000L);
 		State state1 = mock(State.class);
 		State state2 = mock(State.class);
 		List<State> states = Arrays.asList(state1, state2);
-		when(stateRepository.findPackagesUploadStarted()).thenReturn(states);
-		assertEquals(states, service.findPackagesUploadStarted());
+		when(stateRepository.findFailablePackagesAfterStateChangeDate(changedAfterDate)).thenReturn(states);
+		assertEquals(states, service.findFailablePackagesAfterStateChangeDate(changedAfterDate));
 	}
 
 	@Test
