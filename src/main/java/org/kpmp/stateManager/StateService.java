@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +26,7 @@ public class StateService {
 		this.notificationHandler = notificationHandler;
 	}
 
+	@CacheEvict(value = "states", allEntries = true)
 	public String setState(State state, String origin) {
 		State savedState = stateRepository.save(state);
 		notificationHandler.sendNotification(state.getPackageId(), state.getState(), origin, state.getCodicil());
@@ -55,6 +58,7 @@ public class StateService {
 		return failedState != null;
 	}
 
+	@Cacheable(value = "states")
 	public List<State> getAllCurrentStates() {
 		List<State> states = new ArrayList<State>();
 		List<String> packageIds = stateRepository.findAllPackageIds();
