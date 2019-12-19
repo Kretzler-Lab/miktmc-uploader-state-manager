@@ -26,7 +26,7 @@ public class StateService {
 		this.notificationHandler = notificationHandler;
 	}
 
-	@CacheEvict(value="StateService.getAllCurrentStates")
+	@CacheEvict(value = "states", allEntries = true)
 	public String setState(State state, String origin) {
 		State savedState = stateRepository.save(state);
 		notificationHandler.sendNotification(state.getPackageId(), state.getState(), origin, state.getCodicil());
@@ -58,7 +58,7 @@ public class StateService {
 		return failedState != null;
 	}
 
-	@Cacheable(value="StateService.getAllCurrentStates")
+	@Cacheable(value = "states")
 	public List<State> getAllCurrentStates() {
 		List<State> states = new ArrayList<State>();
 		List<String> packageIds = stateRepository.findAllPackageIds();
