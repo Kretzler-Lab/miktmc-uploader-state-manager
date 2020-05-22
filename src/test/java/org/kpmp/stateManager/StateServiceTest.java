@@ -25,11 +25,13 @@ public class StateServiceTest {
 	private StateService service;
 	@Mock
 	private NotificationHandler notificationHandler;
+	@Mock
+	private StateDisplayRepository stateDisplayRepo;
 
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		service = new StateService(stateRepository, notificationHandler);
+		service = new StateService(stateRepository, notificationHandler, stateDisplayRepo);
 		ReflectionTestUtils.setField(service, "uploadFailedState", "UPLOAD_FAILED");
 		ReflectionTestUtils.setField(service, "uploadSucceededState", "UPLOAD_SUCCEEDED");
 	}
@@ -136,5 +138,13 @@ public class StateServiceTest {
 	public void testIsPackageFailedFalse() throws Exception {
 		when(stateRepository.findPackageByIdAndByState("1234", "UPLOAD_FAILED")).thenReturn(null);
 		assertEquals(false, service.isPackageFailed("1234"));
+	}
+
+	@Test
+	public void testGetStateDisplays() throws Exception {
+		List<StateDisplay> stateDisplays = Arrays.asList(mock(StateDisplay.class));
+		when(stateDisplayRepo.findAll()).thenReturn(stateDisplays);
+
+		assertEquals(stateDisplays, service.getAllStateDisplays());
 	}
 }

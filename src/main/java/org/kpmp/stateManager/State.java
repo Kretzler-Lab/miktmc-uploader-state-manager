@@ -3,9 +3,8 @@ package org.kpmp.stateManager;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "state")
+@org.springframework.data.mongodb.core.mapping.Document(collection = "state")
 public class State {
 
 	@Id
@@ -40,9 +39,13 @@ public class State {
 		this.state = state;
 	}
 
-	public String getLargeUploadChecked() { return largeUploadChecked; }
+	public String getLargeUploadChecked() {
+		return largeUploadChecked;
+	}
 
-	public void setLargeUploadChecked(String largeUploadChecked) { this.largeUploadChecked = largeUploadChecked; }
+	public void setLargeUploadChecked(String largeUploadChecked) {
+		this.largeUploadChecked = largeUploadChecked;
+	}
 
 	public String getPackageId() {
 		return packageId;

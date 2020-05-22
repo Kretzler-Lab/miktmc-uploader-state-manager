@@ -19,11 +19,14 @@ public class StateService {
 	@Value("${package.state.upload.succeeded}")
 	private String uploadSucceededState;
 	private NotificationHandler notificationHandler;
+	private StateDisplayRepository stateDisplayRepo;
 
 	@Autowired
-	public StateService(CustomStateRepository stateRepository, NotificationHandler notificationHandler) {
+	public StateService(CustomStateRepository stateRepository, NotificationHandler notificationHandler,
+			StateDisplayRepository stateDisplayRepo) {
 		this.stateRepository = stateRepository;
 		this.notificationHandler = notificationHandler;
+		this.stateDisplayRepo = stateDisplayRepo;
 	}
 
 	@CacheEvict(value = "states", allEntries = true)
@@ -68,6 +71,10 @@ public class StateService {
 		}
 
 		return states;
+	}
+
+	public List<StateDisplay> getAllStateDisplays() {
+		return stateDisplayRepo.findAll();
 	}
 
 }
