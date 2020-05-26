@@ -72,7 +72,7 @@ public class StateControllerTest {
 		List<StateDisplay> stateDisplays = Arrays.asList(mock(StateDisplay.class));
 		when(stateService.getAllStateDisplays()).thenReturn(stateDisplays);
 
-		assertEquals(stateDisplays, controller.getStateDisplays());
+		assertEquals(stateDisplays, controller.getStateDisplays(mock(HttpServletRequest.class)));
 	}
 
 }

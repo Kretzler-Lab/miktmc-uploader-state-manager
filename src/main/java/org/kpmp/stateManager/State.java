@@ -3,8 +3,9 @@ package org.kpmp.stateManager;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@org.springframework.data.mongodb.core.mapping.Document(collection = "state")
+@Document(collection = "state")
 public class State {
 
 	@Id
