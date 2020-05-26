@@ -25,16 +25,23 @@ public class StateDisplayTest {
 	}
 
 	@Test
-	public void testSetStateDisplayInfo() {
-		Document displayInfo = mock(Document.class);
-		stateDisplay.setStateDisplayInfo(displayInfo);
-		assertEquals(displayInfo, stateDisplay.getStateDisplayInfo());
+	public void testSetState() {
+		stateDisplay.setState("state");
+		assertEquals("state", stateDisplay.getState());
 	}
 
 	@Test
 	public void testSetId() {
 		stateDisplay.setId("displayId");
 		assertEquals("displayId", stateDisplay.getId());
+	}
+
+	@Test
+	public void testSetApps() throws Exception {
+		Document apps = mock(Document.class);
+		stateDisplay.setApps(apps);
+
+		assertEquals(apps, stateDisplay.getApps());
 	}
 
 }

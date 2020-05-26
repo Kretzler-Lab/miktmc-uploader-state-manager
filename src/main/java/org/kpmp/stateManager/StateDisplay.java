@@ -6,16 +6,17 @@ import org.springframework.data.annotation.Id;
 @org.springframework.data.mongodb.core.mapping.Document(collection = "stateDisplay")
 public class StateDisplay {
 
-	private Document stateDisplayInfo;
 	@Id
 	private String id;
+	private String state;
+	private Document apps;
 
-	public Document getStateDisplayInfo() {
-		return stateDisplayInfo;
+	public String getState() {
+		return state;
 	}
 
-	public void setStateDisplayInfo(Document stateDisplayInfo) {
-		this.stateDisplayInfo = stateDisplayInfo;
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public String getId() {
@@ -24,5 +25,13 @@ public class StateDisplay {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public Document getApps() {
+		return apps;
+	}
+
+	public void setApps(Document apps) {
+		this.apps = apps;
 	}
 }
