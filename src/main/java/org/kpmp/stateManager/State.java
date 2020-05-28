@@ -40,9 +40,13 @@ public class State {
 		this.state = state;
 	}
 
-	public String getLargeUploadChecked() { return largeUploadChecked; }
+	public String getLargeUploadChecked() {
+		return largeUploadChecked;
+	}
 
-	public void setLargeUploadChecked(String largeUploadChecked) { this.largeUploadChecked = largeUploadChecked; }
+	public void setLargeUploadChecked(String largeUploadChecked) {
+		this.largeUploadChecked = largeUploadChecked;
+	}
 
 	public String getPackageId() {
 		return packageId;

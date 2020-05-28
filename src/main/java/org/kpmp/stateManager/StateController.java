@@ -54,6 +54,12 @@ public class StateController {
 		return stateService.getAllCurrentStates();
 	}
 
+	@RequestMapping(value = "/v1/state/stateDisplayMap", method = RequestMethod.GET)
+	public @ResponseBody List<StateDisplay> getStateDisplays(HttpServletRequest request) {
+		log.info("URI: " + request.getRequestURI() + " | MSG: Retrieving state map");
+		return stateService.getAllStateDisplays();
+	}
+
 	@RequestMapping(value = "/v1/state/events/{afterTime}", method = RequestMethod.GET)
 	public @ResponseBody DeferredResult<List<State>> getStateEvents(@PathVariable("afterTime") String afterTime,
 			HttpServletRequest request) {
