@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.7.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.6.4")
     }
 
 }
@@ -24,7 +24,7 @@ apply plugin: 'com.palantir.docker'
 
 jar {
     baseName='state-manager-service'
-    version= '1.3'
+    version= '2.0'
 }
 
 repositories {
@@ -35,17 +35,18 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-	compile 'org.springframework.boot:spring-boot-starter-web' 
-	compile 'org.apache.commons:commons-compress:1.17'
-	compile 'org.springframework.boot:spring-boot-starter-test'
-	compile 'org.springframework.data:spring-data-mongodb'
-	compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
-	testCompile 'org.springframework.boot:spring-boot-starter-test'
-	testCompile 'org.mockito:mockito-core'
+	implementation 'org.springframework.boot:spring-boot-starter-web' 
+	implementation 'org.apache.commons:commons-compress:1.21'
+	implementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.data:spring-data-mongodb'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'junit:junit:4.12'
 }
 
 springBoot {
-    mainClassName = "org.kpmp.Application"
+    mainClass = "org.kpmp.Application"
 }
 
 task unpack(type: Copy) {
