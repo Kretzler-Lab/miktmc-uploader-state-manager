@@ -2,6 +2,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kpmp.FailedPackageChecker;
+import org.kpmp.stateManager.DluPackageInventoryService;
 import org.kpmp.stateManager.State;
 import org.kpmp.stateManager.StateService;
 import org.mockito.Mock;
@@ -17,6 +18,8 @@ public class FailedPackageCheckerTest {
 
 
     @Mock
+    DluPackageInventoryService dluPackageInventoryService;
+    @Mock
     private StateService service;
     @Mock
     RestTemplate restTemplate;
@@ -27,7 +30,7 @@ public class FailedPackageCheckerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        packageChecker = new FailedPackageChecker(service, restTemplate);
+        packageChecker = new FailedPackageChecker(service, restTemplate, dluPackageInventoryService);
     }
 
     @After

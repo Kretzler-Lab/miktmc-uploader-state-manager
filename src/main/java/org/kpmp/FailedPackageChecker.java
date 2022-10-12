@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kpmp.stateManager.DluPackageInventoryService;
 import org.kpmp.stateManager.State;
 import org.kpmp.stateManager.StateService;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,8 @@ import org.springframework.web.client.RestTemplate;
 public class FailedPackageChecker implements CommandLineRunner {
 
 	private StateService stateService;
+
+	private DluPackageInventoryService dluPackageInventoryService;
 
 	private static final Log log = LogFactory.getLog(FailedPackageChecker.class);
 
@@ -40,9 +43,10 @@ public class FailedPackageChecker implements CommandLineRunner {
 
 	private RestTemplate restTemplate;
 
-	public FailedPackageChecker(StateService stateService, RestTemplate restTemplate) {
+	public FailedPackageChecker(StateService stateService, RestTemplate restTemplate, DluPackageInventoryService dluPackageInventoryService) {
 		this.stateService = stateService;
 		this.restTemplate = restTemplate;
+		this.dluPackageInventoryService = dluPackageInventoryService;
 	}
 
 	public static void main(String[] args) {
@@ -103,6 +107,7 @@ public class FailedPackageChecker implements CommandLineRunner {
 				failedState.setStateChangeDate(new Date());
 				failedState.setCodicil("Failed stale package check");
 				sendStateChange(failedState);
+				dluPackageInventoryService.setPackageInError(state.getPackageId());
 			}
 		}
 
