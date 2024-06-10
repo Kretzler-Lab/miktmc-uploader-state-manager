@@ -12,7 +12,7 @@ plugins {
     id 'com.palantir.docker' version '0.22.1'
 }
 
-group = 'kingstonduo'
+group = 'kretzlerdevs'
 
 
 apply plugin: 'java'
@@ -23,8 +23,8 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'com.palantir.docker'
 
 jar {
-    baseName='state-manager-service'
-    version= '2.2'
+    baseName='miktmc-uploader-state-manager'
+    version= '1.0'
 }
 
 repositories {
@@ -79,7 +79,7 @@ def getCurrentGitBranch() {
 }
 
 docker {
-    name "kingstonduo/${jar.baseName}:" + getCurrentGitBranch()
+    name "kretzlerdevs/${jar.baseName}:" + getCurrentGitBranch()
     copySpec.from(tasks.unpack.outputs).into("dependency")
     buildArgs(['DEPENDENCY': "dependency"])
 }
