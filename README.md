@@ -1,3 +1,8 @@
 # State Manager Service
   
-State management for the MIKTMC Uploader. 
+State manager for the MIKTMC Uploader. 
+
+# Building
+
+`./gradlew build docker`
+
