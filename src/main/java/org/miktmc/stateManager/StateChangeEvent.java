@@ -1,4 +1,4 @@
-package org.kpmp.stateManager;
+package org.miktmc.stateManager;
 
 class StateChangeEvent {
 	private String origin;

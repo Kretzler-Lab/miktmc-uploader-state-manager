@@ -1,4 +1,4 @@
-package org.kpmp.stateManager;
+package org.miktmc.stateManager;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

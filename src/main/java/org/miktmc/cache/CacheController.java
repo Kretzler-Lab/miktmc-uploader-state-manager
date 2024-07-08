@@ -1,4 +1,4 @@
-package org.kpmp.cache;
+package org.miktmc.cache;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
