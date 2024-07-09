@@ -1,4 +1,4 @@
-package org.kpmp.cache;
+package org.miktmc.cache;
 
 import java.util.Collection;
 

@@ -1,4 +1,4 @@
-package org.kpmp.stateManager;
+package org.miktmc.stateManager;
 
 import org.bson.Document;
 import org.springframework.data.annotation.Id;

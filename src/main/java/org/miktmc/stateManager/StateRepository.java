@@ -1,4 +1,4 @@
-package org.kpmp.stateManager;
+package org.miktmc.stateManager;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
