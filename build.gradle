@@ -24,7 +24,7 @@ apply plugin: 'com.palantir.docker'
 
 jar {
     baseName='miktmc-uploader-state-manager'
-    version= '1.0'
+    version= '1.2'
 }
 
 repositories {
