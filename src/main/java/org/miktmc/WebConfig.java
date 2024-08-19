@@ -1,4 +1,4 @@
-package org.kpmp;
+package org.miktmc;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
